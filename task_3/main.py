@@ -1,8 +1,22 @@
- import json
+import json
 
 FILE_NAME = "cities_data.json"
 
 operations_count = 0
+
+def text(flag = True):
+    if flag:        
+        print(f"\nЗапись #{i}:")
+    print(f"  ID: {city['id']}")
+    print(f"  Город: {city['name']}")
+    print(f"  Страна: {city['country']}")
+    print(f"  Крупный город (>100 тыс. чел.): {'Да' if city['is_big'] else 'Нет'}")
+    print(f"  Население: {city['people_count']:,} чел.")
+
+def save_file():
+    with open(FILE_NAME, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=2)
+    print("файл успешно сохранен")
 
 try:
     with open(FILE_NAME, 'r', encoding='utf-8') as file:
@@ -47,9 +61,8 @@ except (FileNotFoundError, json.JSONDecodeError):
         }
     ]
 
-    with open(FILE_NAME, 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False, indent=2)
-    print("Создан файл с 5 начальными записями о городах.")
+    save_file()
+
 while True:
     print("\n")
     print("1. Вывести все записи")
@@ -66,14 +79,9 @@ while True:
     
     if choise == 1:
         for i, city in enumerate(data, 1):
-                print(f"\nЗапись #{i}:")
-                print(f"  ID: {city['id']}")
-                print(f"  Город: {city['name']}")
-                print(f"  Страна: {city['country']}")
-                print(f"  Крупный город (>100 тыс. чел.): {'Да' if city['is_big'] else 'Нет'}")
-                print(f"  Население: {city['people_count']:,} чел.")
-        
+                text()
         operations_count += 1
+
     elif choise == 2:
         try:
             num = int(input("введите id города: "))
@@ -82,14 +90,7 @@ while True:
             continue
         for i, city in enumerate(data):
             if city['id'] == num:
-                print("\n")
-                print(f"  ID: {city['id']}")
-                print(f"  Город: {city['name']}")
-                print(f"  Страна: {city['country']}")
-                print(f"  Крупный город (>100 тыс. чел.): {'Да' if city['is_big'] else 'Нет'}")
-                print(f"  Население: {city['people_count']:,} чел.")
-                operations_count += 1
-                break
+                text(flag = False)
 
     elif choise == 3:
             print("введите новые записи о городе")
@@ -127,10 +128,8 @@ while True:
                 }
                 data.append(new_city)
 
-                with open(FILE_NAME, 'w', encoding="utf-8") as file:
-                    json.dump(data, file, ensure_ascii=False, indent=2)
-                    print("город успешно записан в файл")
-                    operations_count += 1
+                save_file()
+                operations_count += 1
 
             except ValueError:
                 print("id должно быть числом")
@@ -151,8 +150,7 @@ while True:
                 if confirm.lower() == 'да' or 'Да' or 'ДА':
                     deleted_city = data.pop(i)
                     
-                    with open(FILE_NAME, 'w', encoding='utf-8') as file:
-                        json.dump(data, file, ensure_ascii=False, indent=2)
+                    save_file()
                     
                     print(f"\nГород '{deleted_city['name']}' успешно удален!")
                     operations_count += 1
